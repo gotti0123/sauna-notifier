@@ -2,8 +2,7 @@ name: Sauna Notification Schedule
 
 on:
   schedule:
-    # 毎週月曜日の朝9:00（日本時間）に実行
-    # UTCでは日曜日の24:00、つまり月曜の00:00
+    # 毎週月曜日の朝9:00 (日本時間) に実行
     - cron: '0 0 * * 1'
   workflow_dispatch: # 手動実行用ボタンを表示
 
@@ -28,7 +27,6 @@ jobs:
         env:
           LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
           LINE_CHANNEL_SECRET: ${{ secrets.LINE_CHANNEL_SECRET }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
           LINE_GROUP_ID: ${{ secrets.LINE_GROUP_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

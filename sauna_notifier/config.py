@@ -13,3 +13,4 @@ if not LINE_CHANNEL_ACCESS_TOKEN:
 
 if not LINE_USER_ID:
     print("Warning: LINE_USER_ID is not set.")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

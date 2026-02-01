@@ -1,37 +1,20 @@
-import google.generativeai as genai
+import os
+from google import genai
+from google.genai import types
 from sauna_notifier.notifier import send_notification
 from sauna_notifier.config import GEMINI_API_KEY
 import datetime
 def get_ladies_day_info():
     """
     Geminiの検索機能を使ってレディースデー情報を取得する
+    (New google-genai library version)
     """
     if not GEMINI_API_KEY:
         print("Gemini API Key is not set. Skipping search.")
         return ""
     try:
-        print(f"GenAI Version: {genai.__version__}")
-        genai.configure(api_key=GEMINI_API_KEY)
+        client = genai.Client(api_key=GEMINI_API_KEY)
         
-        from google.generativeai import protos
-        # モデル候補: 利用可能なリストにある gemini-flash-latest を使用
-        model_name = 'gemini-flash-latest'
-        
-        # ツール設定: protosを使って明示的にGoogle Searchを指定
-        # 辞書形式だとFunctionCallingと誤認される場合があるため回避
-        tools = [
-            protos.Tool(google_search=protos.GoogleSearch())
-        ]
-        
-        try:
-            model = genai.GenerativeModel(
-                model_name=model_name,
-                tools=tools
-            )
-            print(f"Initialized model: {model_name}")
-        except Exception as e:
-            print(f"Failed to initialize {model_name}: {e}")
-            raise e
         today = datetime.date.today()
         # 除外施設の定義
         excluded_facilities = [
@@ -59,20 +42,21 @@ def get_ladies_day_info():
         見つからなかった場合は「今週の新しいレディースデー情報は見つかりませんでした」とのみ出力してください。
         余計な前置きや挨拶は不要です。
         """
-        response = model.generate_content(prompt)
+        # ツール設定 (Google Search)
+        tool = types.Tool(google_search=types.GoogleSearch())
+        
+        response = client.models.generate_content(
+            model='gemini-flash-latest',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[tool],
+                response_modalities=["TEXT"]
+            )
+        )
+        
         return response.text
     except Exception as e:
         print(f"Error fetching ladies day info: {e}")
-        
-        # デバッグ: 利用可能なモデルを一覧表示
-        print("\n=== Available Models ===")
-        try:
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    print(f"- {m.name}")
-        except Exception as list_err:
-            print(f"Could not list models: {list_err}")
-        print("========================\n")
         return f"（情報の取得中にエラーが発生しました: {str(e)}）"
 def main():
     print("=== Sauna Notifier Started ===")

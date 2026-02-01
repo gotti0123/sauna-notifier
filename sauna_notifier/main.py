@@ -13,13 +13,14 @@ def get_ladies_day_info():
         print(f"GenAI Version: {genai.__version__}")
         genai.configure(api_key=GEMINI_API_KEY)
         
+        from google.generativeai import protos
         # モデル候補: 利用可能なリストにある gemini-flash-latest を使用
-        # 安定版のエイリアスを使用することでQuotaエラーを回避
         model_name = 'gemini-flash-latest'
         
-        # ツール設定: google_search を明示的に使用
+        # ツール設定: protosを使って明示的にGoogle Searchを指定
+        # 辞書形式だとFunctionCallingと誤認される場合があるため回避
         tools = [
-            {"google_search": {}}
+            protos.Tool(google_search=protos.GoogleSearch())
         ]
         
         try:

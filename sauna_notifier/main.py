@@ -17,10 +17,15 @@ def get_ladies_day_info():
         # 安定版のエイリアスを使用することでQuotaエラーを回避
         model_name = 'gemini-flash-latest'
         
+        # ツール設定: google_search を明示的に使用
+        tools = [
+            {"google_search": {}}
+        ]
+        
         try:
             model = genai.GenerativeModel(
                 model_name=model_name,
-                tools='google_search_retrieval'
+                tools=tools
             )
             print(f"Initialized model: {model_name}")
         except Exception as e:

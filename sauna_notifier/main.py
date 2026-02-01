@@ -10,10 +10,11 @@ def get_ladies_day_info():
         print("Gemini API Key is not set. Skipping search.")
         return ""
     try:
+        print(f"GenAI Version: {genai.__version__}")
         genai.configure(api_key=GEMINI_API_KEY)
         
         model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
+            model_name='gemini-2.0-flash-exp',
             tools='google_search_retrieval'
         )
         today = datetime.date.today()

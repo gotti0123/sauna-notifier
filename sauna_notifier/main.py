@@ -13,8 +13,9 @@ def get_ladies_day_info():
         print(f"GenAI Version: {genai.__version__}")
         genai.configure(api_key=GEMINI_API_KEY)
         
-        # モデル候補: 利用可能な gemini-2.0-flash を使用
-        model_name = 'gemini-2.0-flash'
+        # モデル候補: 利用可能なモデルリストにあった軽量版を使用
+        # Limit 0エラー回避のため Lite モデルを選択
+        model_name = 'gemini-2.0-flash-lite-001'
         
         try:
             model = genai.GenerativeModel(

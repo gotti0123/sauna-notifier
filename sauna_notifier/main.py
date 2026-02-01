@@ -13,10 +13,18 @@ def get_ladies_day_info():
         print(f"GenAI Version: {genai.__version__}")
         genai.configure(api_key=GEMINI_API_KEY)
         
-        model = genai.GenerativeModel(
-            model_name='gemini-2.0-flash-exp',
-            tools='google_search_retrieval'
-        )
+        # モデル候補: 1.5-proを優先
+        model_name = 'gemini-1.5-pro'
+        
+        try:
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                tools='google_search_retrieval'
+            )
+            print(f"Initialized model: {model_name}")
+        except Exception as e:
+            print(f"Failed to initialize {model_name}: {e}")
+            raise e
         today = datetime.date.today()
         # 除外施設の定義
         excluded_facilities = [
@@ -48,6 +56,16 @@ def get_ladies_day_info():
         return response.text
     except Exception as e:
         print(f"Error fetching ladies day info: {e}")
+        
+        # デバッグ: 利用可能なモデルを一覧表示
+        print("\n=== Available Models ===")
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    print(f"- {m.name}")
+        except Exception as list_err:
+            print(f"Could not list models: {list_err}")
+        print("========================\n")
         return f"（情報の取得中にエラーが発生しました: {str(e)}）"
 def main():
     print("=== Sauna Notifier Started ===")

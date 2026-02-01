@@ -12,14 +12,9 @@ def get_ladies_day_info():
     try:
         genai.configure(api_key=GEMINI_API_KEY)
         
-        # 検索機能ツール設定
-        tools = [
-            {"google_search": {}}
-        ]
-        
         model = genai.GenerativeModel(
             model_name='gemini-1.5-flash',
-            tools=tools
+            tools='google_search_retrieval'
         )
         today = datetime.date.today()
         # 除外施設の定義
